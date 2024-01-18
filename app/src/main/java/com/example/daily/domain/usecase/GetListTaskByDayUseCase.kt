@@ -1,6 +1,7 @@
 package com.example.daily.domain.usecase
 
 import com.example.daily.domain.models.Task
+import com.example.daily.domain.repository.DailyRepository
 import kotlinx.coroutines.flow.Flow
 import java.sql.Timestamp
 import javax.inject.Inject
