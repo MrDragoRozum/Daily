@@ -1,11 +1,9 @@
 package com.example.daily.domain.models
 
-import java.sql.Timestamp
-
 data class Task(
     val id: Int,
-    val dateStart: Timestamp,
-    val dateFinish: Timestamp,
+    val dateStart: Long,
+    val dateFinish: Long,
     val name: String,
     val description: String
 )
