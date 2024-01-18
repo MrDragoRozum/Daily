@@ -7,6 +7,7 @@ import java.sql.Timestamp
 import javax.inject.Inject
 
 class GetListTaskByDayUseCase @Inject constructor(private val repository: DailyRepository) {
-    operator fun invoke(day: Timestamp): Flow<List<Task>> = repository.getListTaskByDay(day)
+    operator fun invoke(startDay: Timestamp, endDay: Timestamp): Flow<List<Task>> =
+        repository.getListTaskByDay(startDay, endDay)
 
 }

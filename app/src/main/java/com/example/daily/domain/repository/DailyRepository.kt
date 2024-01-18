@@ -6,8 +6,8 @@ import java.sql.Timestamp
 
 
 interface DailyRepository {
-    fun addTask(params: Task)
-    fun getListTaskByDay(day: Timestamp): Flow<List<Task>>
+    suspend fun addTask(params: Task)
+    fun getListTaskByDay(startDay: Timestamp, endDay: Timestamp): Flow<List<Task>>
     suspend fun importTasks(uri: String)
     suspend fun exportTasks(uri: String)
 }

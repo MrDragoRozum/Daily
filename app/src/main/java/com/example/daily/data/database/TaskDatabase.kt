@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.daily.data.database.model.TaskDbModel
 
-@Database(entities = [TaskDatabase::class], version = 1, exportSchema = false)
+@Database(entities = [TaskDbModel::class], version = 1, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
     companion object {
         private var database: TaskDatabase? = null
@@ -20,7 +21,9 @@ abstract class TaskDatabase : RoomDatabase() {
                     context,
                     TaskDatabase::class.java,
                     DB_NAME
-                ).build()
+                ).allowMainThreadQueries()
+                    .build()
+                // TODO: Не забыть убрать allowMainThreadQueries()
                 database = instance
                 return instance
             }
