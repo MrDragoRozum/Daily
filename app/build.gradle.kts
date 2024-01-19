@@ -49,8 +49,9 @@ dependencies {
 
     implementation(libs.material.calendar.view.v190rc04)
 
-    implementation(libs.google.dagger.v250)
-    kapt(libs.google.dagger.v250)
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
+    kapt(libs.dagger.android.support)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
