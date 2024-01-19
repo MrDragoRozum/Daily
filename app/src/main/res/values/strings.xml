@@ -5,4 +5,5 @@
     <string name="adding_task">Добавить задание</string>
     <string name="import_tasks">Импортировать задания</string>
     <string name="export_tasks">Экспортировать задания</string>
+    <string name="error_message">Что-то пошло не так…</string>
 </resources>

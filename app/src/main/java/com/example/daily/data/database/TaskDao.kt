@@ -17,7 +17,7 @@ interface TaskDao {
     fun insertListTask(list: List<TaskDbModel>)
 
     @Query("SELECT * FROM TASK WHERE (DATE_START BETWEEN :startDay AND :endDay) AND (DATE_FINISH BETWEEN :startDay AND :endDay)")
-    fun getListTaskByDay(startDay: Long, endDay: Long): Flow<List<TaskDbModel>>
+    fun getListTaskByDay(startDay: Long, endDay: Long): List<TaskDbModel>
 
     @Query("SELECT * FROM TASK")
     fun getListTask(): List<TaskDbModel>

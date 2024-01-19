@@ -5,6 +5,7 @@ import com.example.daily.data.external.TaskJson
 import com.example.daily.domain.models.Task
 import javax.inject.Inject
 
+// TODO: Переделать маппер
 class TaskMapper @Inject constructor() {
     fun mapEntityToDbModel(task: Task): TaskDbModel = TaskDbModel(
         id = task.id,
