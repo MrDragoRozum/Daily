@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-abstract class DataModule {
+class DataModule {
     @Provides
     @ApplicationScope
     fun provideTaskDao(context: Context) = TaskDatabase.getInstance(context).taskDao()

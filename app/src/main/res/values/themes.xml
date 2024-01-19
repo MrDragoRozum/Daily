@@ -1,9 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.Daily" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimaryDark">@color/blue</item>
+        <item name="android:navigationBarColor">#FEF6FE</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <style name="Theme.Daily" parent="Base.Theme.Daily" />
+
+    <style name="CalenderViewTheme" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorAccent">@color/blue</item>
+    </style>
+
+    <style name="dailyThemeMenu" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="dailyThemeToolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextColor">@color/white</item>
+        <item name="toolbarStyle">@style/dailyThemeMenu</item>
+        <item name="background">@color/blue</item>
+    </style>
 </resources>

@@ -47,8 +47,6 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(libs.material.calendar.view.v190rc04)
-
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
     kapt(libs.dagger.android.support)

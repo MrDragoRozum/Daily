@@ -1,4 +1,4 @@
-package com.example.daily
+package com.example.daily.presentation.application
 
 import android.app.Application
 import com.example.daily.di.DaggerApplicationComponent

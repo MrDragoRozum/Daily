@@ -1,7 +1,7 @@
 package com.example.daily.di
 
 import android.content.Context
-import com.example.daily.MainActivity
+import com.example.daily.presentation.activity.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 

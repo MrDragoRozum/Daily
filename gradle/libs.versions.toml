@@ -13,8 +13,6 @@ lifecycleViewmodelKtx = "2.7.0"
 material = "1.11.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
-materialCalendarView = "1.7.0"
-materialCalendarViewVersion = "1.9.0-rc04"
 roomRuntime = "2.6.1"
 
 [libraries]
@@ -36,8 +34,6 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-material-calendar-view = { module = "com.applandeo:material-calendar-view", version.ref = "materialCalendarView" }
-material-calendar-view-v190rc04 = { module = "com.applandeo:material-calendar-view", version.ref = "materialCalendarViewVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
