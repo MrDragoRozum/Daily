@@ -6,6 +6,12 @@
         <item name="colorPrimaryDark">@color/blue</item>
         <item name="android:navigationBarColor">#FEF6FE</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:colorControlActivated">@color/blue</item>
+        <item name="android:actionOverflowButtonStyle">@style/dailyThemeOverflowButton</item>
     </style>
+
+    <style name="dailyThemeOverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/white</item>
+    </style>
+
 </resources>

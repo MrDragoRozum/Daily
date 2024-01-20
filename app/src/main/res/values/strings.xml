@@ -7,4 +7,7 @@
     <string name="export_tasks">Экспортировать задания</string>
     <string name="error_message">Что-то пошло не так…</string>
     <string name="success_message">Успешно</string>
+    <string name="time_hint">Время:</string>
+    <string name="title_hint">Заголовок:</string>
+    <string name="details_hint">Подробности:</string>
 </resources>
