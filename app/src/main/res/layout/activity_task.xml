@@ -7,4 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".presentation.activity.TaskActivity">
 
+    <com.example.daily.presentation.customView.InterfaceTaskView
+        android:id="@+id/interfaceTaskView"
+        android:layout_width="match_parent"
+        android:padding="16dp"
+        android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

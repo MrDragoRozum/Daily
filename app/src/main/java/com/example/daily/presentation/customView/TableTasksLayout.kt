@@ -83,7 +83,6 @@ class TableTasksLayout @JvmOverloads constructor(
         }
     }
 
-    // TODO: Подумать над дизайном
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         drawTimeTextsAndLines(canvas)

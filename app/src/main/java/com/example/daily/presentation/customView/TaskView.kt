@@ -38,17 +38,17 @@ class TaskView @JvmOverloads constructor(
 
     var startTime: Int = DEFAULT_VALUE_START_TIME
         set(value) {
-            if (value < 0) return
+            if (isStartTimeMoreThanZero(value)) return
             field = value
         }
     var endTime: Int = DEFAULT_VALUE_END_TIME
         set(value) {
-            if (startTime >= value) {
+            if (isStartTimeMoreOrSameEndTime(startTime, value)) {
                 startTime = DEFAULT_VALUE_START_TIME
                 installTime()
                 return
             }
-            if (value > MAX_VALUE_END_TIME) {
+            if (isEndTimeMoreThanMaxValue(value)) {
                 field = MAX_VALUE_END_TIME
                 installTime()
                 return
@@ -111,8 +111,5 @@ class TaskView @JvmOverloads constructor(
 
     companion object {
         private const val SIZE_TASK_ON_HOUR = 50f
-        private const val DEFAULT_VALUE_START_TIME = 1
-        private const val DEFAULT_VALUE_END_TIME = 2
-        private const val MAX_VALUE_END_TIME = 23
     }
 }
