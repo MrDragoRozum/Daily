@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import java.sql.Timestamp
 import java.util.Calendar
+import java.util.Date
 
 @Module
 class DataModule {
@@ -21,6 +22,10 @@ class DataModule {
         val endDay = Timestamp(startDay.time + DAY_IN_MILLIS)
         return TodayDayInTimestamps(startDay, endDay)
     }
+
+    @Provides
+    @ApplicationScope
+    fun provideDate(): Date = Date()
 
     private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS
 
