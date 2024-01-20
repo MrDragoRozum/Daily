@@ -14,6 +14,11 @@
         android:theme="@style/Theme.Daily"
         tools:targetApi="31">
         <activity
+            android:screenOrientation="portrait"
+            android:name=".presentation.activity.TaskActivity"
+            android:exported="false" />
+        <activity
+            android:screenOrientation="portrait"
             android:name=".presentation.activity.MainActivity"
             android:exported="true">
             <intent-filter>
