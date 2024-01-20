@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -49,7 +48,7 @@ class DailyRepositoryImpl @Inject constructor(
         refreshListTask.collect {
             emit(getMappedListFromDbToEntity())
         }
-    }.filterNot { it.isEmpty() }
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     override suspend fun importTasks(uri: String) {

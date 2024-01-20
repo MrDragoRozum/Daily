@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
         listeners()
         observes(viewModel)
         registersActivityResults()
@@ -65,11 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun listeners() {
         binding.calendarViewTasks.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            viewModel.refreshTasks(
-                year,
-                month,
-                dayOfMonth
-            )
+            viewModel.refreshTasks(year, month, dayOfMonth)
         }
     }
 
@@ -77,17 +75,23 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.state.flowWithLifecycle(lifecycle).collectLatest {
                 when (it) {
-                    is State.Error -> Toast.makeText(
-                        this@MainActivity,
-                        R.string.error_message,
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    is State.Loading -> Log.d("TestMainActivity", "Что-то гружу")
-                    is State.Result -> Log.d("TestMainActivity", "Что-то получил ${it.list}")
+                    is State.Error -> toast(R.string.error_message)
+                    is State.Success -> toast(R.string.success_message)
+                    is State.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is State.Result -> {
+                        binding.progressBar.visibility = View.GONE
+                    }
                 }
             }
         }
+    }
+
+    private fun toast(resId: Int) {
+        Toast.makeText(
+            this@MainActivity,
+            resId,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

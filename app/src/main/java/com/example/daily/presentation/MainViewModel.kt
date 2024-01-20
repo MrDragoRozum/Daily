@@ -9,13 +9,13 @@ import com.example.daily.domain.usecase.GetListTaskSpecificDay
 import com.example.daily.domain.usecase.ImportTasksUseCase
 import com.example.daily.domain.usecase.RequestNewListTaskSpecificDay
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.sql.Timestamp
 import java.util.Calendar
@@ -29,27 +29,31 @@ class MainViewModel @Inject constructor(
     private val calendar: Calendar
 ) : ViewModel() {
 
+    private var isNotException = true
+
     private val exception = CoroutineExceptionHandler { _, throwable ->
         viewModelScope.launch {
             error.emit(State.Error)
+            isNotException = false
             Log.d("ViewModelException", "$throwable")
         }
     }
 
-    private val loading = MutableStateFlow<State>(State.Loading)
+    private val loading = MutableSharedFlow<State>()
+    private val success = MutableSharedFlow<State>()
     private val error = MutableSharedFlow<State>()
 
     val state = getListTaskSpecificDay.invoke()
         .map { State.Result(it) }
-        .mergeWith(loading, error)
-        .shareIn(viewModelScope, SharingStarted.Lazily, 1)
+        .mergeWith(loading, error, success)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), State.Loading)
 
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
-        loading.value = State.Loading
-        calendar.set(year, month, dayOfMonth)
-        Timestamp(calculateTime(calendar.timeInMillis)).also { startDay ->
-            Timestamp(startDay.time + DAY_IN_MILLIS).also { endDay ->
-                viewModelScope.launch {
+        viewModelScope.launch {
+            loading.emit(State.Loading)
+            calendar.set(year, month, dayOfMonth)
+            Timestamp(calculateTime(calendar.timeInMillis)).also { startDay ->
+                Timestamp(startDay.time + DAY_IN_MILLIS).also { endDay ->
                     requestNewListTaskSpecificDay(startDay.time, endDay.time)
                 }
             }
@@ -57,23 +61,28 @@ class MainViewModel @Inject constructor(
     }
 
     fun import(uri: Uri?) {
-        uriNotNull(uri)
-        viewModelScope.launch(exception) {
-            importTasksUseCase(uri.toString())
+        uri?.let {
+            viewModelScope.launch(exception) {
+                importTasksUseCase(uri.toString())
+            }.also { returnSuccess(it) }
         }
     }
 
     fun export(uri: Uri?) {
-        uriNotNull(uri)
-        viewModelScope.launch(exception) {
-            exportTasksUseCase(uri.toString())
+        uri?.let {
+            viewModelScope.launch(exception) {
+                exportTasksUseCase(uri.toString())
+            }.also { returnSuccess(it) }
         }
     }
 
-    private fun uriNotNull(uri: Uri?) {
-        if (uri == null) {
-            loading.value = State.Error
-            return
+    private fun returnSuccess(coroutine: Job) {
+        viewModelScope.launch {
+            coroutine.join()
+            if (isNotException) {
+                success.emit(State.Success)
+            }
+            isNotException = true
         }
     }
 
@@ -82,5 +91,6 @@ class MainViewModel @Inject constructor(
 
     companion object {
         private const val DAY_IN_MILLIS = 86400000
+        private const val FIVE_SECOND = 5_000L
     }
 }
