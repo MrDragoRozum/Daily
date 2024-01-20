@@ -87,11 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toast(resId: Int) {
-        Toast.makeText(
-            this@MainActivity,
-            resId,
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(this@MainActivity, resId, Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

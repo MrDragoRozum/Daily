@@ -24,7 +24,6 @@ class DataModule {
     }
 
     @Provides
-    @ApplicationScope
     fun provideDate(): Date = Date()
 
     private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS
