@@ -184,9 +184,9 @@ class InterfaceTaskView @JvmOverloads constructor(
         with(binding) {
             task?.let {
                 buttonAddingTask.visibility = INVISIBLE
-                textInputEditTextDate.isEnabled = false
-                textInputEditTextDetails.isEnabled = false
-                textInputEditTextTitle.isEnabled = false
+                textInputEditTextDate.isFocusable = false
+                textInputEditTextDetails.isFocusable = false
+                textInputEditTextTitle.isFocusable = false
 
                 val time = context.getString(R.string.time_taskView, it.dateStart, it.dateFinish)
                 textInputEditTextDate.setText(time)
@@ -199,9 +199,9 @@ class InterfaceTaskView @JvmOverloads constructor(
     private fun writingMode() {
         with(binding) {
             buttonAddingTask.visibility = VISIBLE
-            textInputEditTextDate.isEnabled = true
-            textInputEditTextDetails.isEnabled = true
-            textInputEditTextTitle.isEnabled = true
+            textInputEditTextDate.isFocusable = true
+            textInputEditTextDetails.isFocusable = true
+            textInputEditTextTitle.isFocusable = true
         }
     }
 

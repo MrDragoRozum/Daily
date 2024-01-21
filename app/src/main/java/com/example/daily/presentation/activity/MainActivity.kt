@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -98,24 +99,37 @@ class MainActivity : AppCompatActivity() {
                     is StateMain.Error -> toast(R.string.error_message)
                     is StateMain.Success -> toast(R.string.success_message)
                     is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is StateMain.Result -> {
-                        with(binding) {
-                            tableTasksLayout.removeAllViews()
-                            progressBar.visibility = View.GONE
-                            tableTasksLayout.apply {
-                                state.list.map { task ->
-                                    TaskView(this@MainActivity).apply {
-                                        // Перенести toInt в mapper
-                                        title = task.name
-                                        startTime = task.dateStart.toInt()
-                                        endTime = task.dateFinish.toInt()
-                                    }
-                                }.also {
-                                    addListTaskView(it)
-                                }
+                    is StateMain.Result ->  installTaskViews(state)
+                }
+            }
+        }
+    }
+
+    private fun installTaskViews(state: StateMain.Result) {
+        with(binding) {
+            tableTasksLayout.removeAllViews()
+            progressBar.visibility = View.GONE
+
+            tableTasksLayout.apply {
+                state.list.map { task ->
+                    TaskView(this@MainActivity).apply {
+                        // Перенести toInt в mapper
+                        title = task.name
+                        startTime = task.dateStart.toInt()
+                        endTime = task.dateFinish.toInt()
+                        setOnClickListener {
+                            TaskActivity.newIntent(
+                                context =this@MainActivity,
+                                mode = InterfaceTaskView.Mode.READING,
+                                task = task,
+                                time = null
+                            ).also {
+                                startActivity(it)
                             }
                         }
                     }
+                }.also {
+                    addListTaskView(it)
                 }
             }
         }
