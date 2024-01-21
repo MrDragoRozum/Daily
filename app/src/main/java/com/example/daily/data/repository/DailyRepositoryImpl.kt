@@ -78,7 +78,7 @@ class DailyRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun getMappedListFromDbToEntity() = dao.getListTaskByDay(
+    private suspend fun getMappedListFromDbToEntity() = dao.getListTaskByDay(
         todayDayInTimestamps.startDay.time,
         todayDayInTimestamps.endDay.time
     ).map { mapper.mapDbModelToEntity(it) }

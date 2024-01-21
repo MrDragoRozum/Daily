@@ -21,9 +21,7 @@ abstract class TaskDatabase : RoomDatabase() {
                     context,
                     TaskDatabase::class.java,
                     DB_NAME
-                ).allowMainThreadQueries()
-                    .build()
-                // TODO: Не забыть убрать allowMainThreadQueries()
+                ).build()
                 database = instance
                 return instance
             }
