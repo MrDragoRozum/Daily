@@ -9,6 +9,7 @@ import com.example.daily.R
 import com.example.daily.databinding.InterfaceOfTaskBinding
 import com.example.daily.domain.models.Task
 import com.example.daily.presentation.customView.utils.*
+import com.google.android.material.textfield.TextInputEditText
 
 typealias OnClickAddingButtonTaskListener = ((task: Task) -> Unit)
 
@@ -51,7 +52,7 @@ class InterfaceTaskView @JvmOverloads constructor(
     fun setMode(mode: Mode = Mode.UNSPECIFIED) {
         when (mode) {
             Mode.READING -> readingMode()
-            Mode.ADDING -> writingMode()
+            Mode.ADDING -> addingMode()
             Mode.UNSPECIFIED -> error("Недопустимый режим")
         }
     }
@@ -60,74 +61,44 @@ class InterfaceTaskView @JvmOverloads constructor(
         this.listener = listener
     }
 
+    private fun readingMode() {
+        with(binding) {
+            task?.let {
+                buttonAddingTask.visibility = INVISIBLE
+                textInputEditTextDate.isFocusable = false
+                textInputEditTextDetails.isFocusable = false
+                textInputEditTextTitle.isFocusable = false
+
+                val time = context.getString(
+                    R.string.time_task_in_interfaceTaskView,
+                    it.dateStart,
+                    it.dateFinish
+                )
+                textInputEditTextDate.setText(time)
+                textInputEditTextDetails.setText(it.description)
+                textInputEditTextTitle.setText(it.name)
+            }
+        }
+    }
+
+    private fun addingMode() {
+        with(binding) {
+            buttonAddingTask.visibility = VISIBLE
+            textInputEditTextDate.isFocusable = true
+            textInputEditTextDetails.isFocusable = true
+            textInputEditTextTitle.isFocusable = true
+        }
+    }
+
     private fun listener() {
         listenerButtonForCreatingTask()
         listenerEditTextDateToGetTime()
         listenersResetErrorInputLayouts()
     }
 
-    private fun listenersResetErrorInputLayouts() {
-        binding.textInputEditTextTitle.addTextChangedListener {
-            binding.textInputLayoutTitle.error = null
-        }
-        binding.textInputEditTextDetails.addTextChangedListener {
-            binding.textInputLayoutDetails.error = null
-        }
-    }
-
-    private fun listenerEditTextDateToGetTime() {
-        with(binding.textInputEditTextDate) {
-            doOnTextChanged { text, start, before, _ ->
-                val textToString = text.toString()
-                val startTask = textToString.substringBefore(SEPARATOR)
-
-                binding.textInputLayoutDate.error = null
-
-                when (start) {
-                    in 0..2 -> {
-                        if (!textToString.contains(SEPARATOR) && regex.matches(startTask)) {
-                            this.text?.append(SEPARATOR)
-                        } else if (textToString.contains(SEPARATOR) && !regex.matches(startTask)) {
-                            val result = textToString.substring(start, start)
-                            setText(result)
-                            setSelection(result.length)
-                        }
-                    }
-
-                    3 -> if (textToString.length == 4 && before > 0) this.text = null
-
-                    4 -> {
-                        var startTaskToInt = startTask.toInt()
-                        var endTaskToInt = textToString.substringAfter(SEPARATOR).toInt()
-
-                        val pair = checkTimeForCorrect(startTaskToInt, endTaskToInt)
-                        endTaskToInt = pair.first
-                        startTaskToInt = pair.second
-
-                        if (before == 0) {
-                            setText(
-                                context.getString(
-                                    R.string.time_task_in_interfaceTaskView,
-                                    startTaskToInt,
-                                    endTaskToInt
-                                )
-                            )
-                            setSelection(textToString.length)
-                            startTime = startTaskToInt
-                            endTime = endTaskToInt
-                        } else {
-                            this.text = null
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun listenerButtonForCreatingTask() {
         with(binding) {
             buttonAddingTask.setOnClickListener {
-
                 if (checkDataFromEditTextsForCorrectness()) return@setOnClickListener
 
                 Task(
@@ -135,9 +106,7 @@ class InterfaceTaskView @JvmOverloads constructor(
                     dateFinish = endTime.toLong(),
                     name = textInputEditTextTitle.text.toString(),
                     description = textInputEditTextDetails.text.toString()
-                ).also {
-                    listener?.invoke(it)
-                }
+                ).also { listener?.invoke(it) }
             }
         }
     }
@@ -158,6 +127,58 @@ class InterfaceTaskView @JvmOverloads constructor(
             }
         }
         return error
+    }
+
+    private fun listenerEditTextDateToGetTime() {
+        with(binding.textInputEditTextDate) {
+            doOnTextChanged { text, start, before, _ ->
+                val textToString = text.toString()
+                val startTask = textToString.substringBefore(SEPARATOR)
+
+                when (start) {
+                    in 0..2 -> addSeparatorOrDeleteText(textToString, startTask)
+                    3 -> if (textToString.length == 4 && before > 0) this.text = null
+                    4 -> installValuesInStartAndEndTime(startTask, textToString, before)
+                }
+            }
+        }
+    }
+
+    private fun TextInputEditText.installValuesInStartAndEndTime(
+        startTask: String,
+        textToString: String,
+        before: Int
+    ) {
+        var startTaskToInt = startTask.toInt()
+        var endTaskToInt = textToString.substringAfter(SEPARATOR).toInt()
+
+        val pair = checkTimeForCorrect(startTaskToInt, endTaskToInt)
+        endTaskToInt = pair.first
+        startTaskToInt = pair.second
+
+        if (before == 0) {
+            setText(
+                context.getString(
+                    R.string.time_task_in_interfaceTaskView,
+                    startTaskToInt,
+                    endTaskToInt
+                )
+            )
+            setSelection(textToString.length)
+            startTime = startTaskToInt
+            endTime = endTaskToInt
+        } else { text = null}
+    }
+
+    private fun TextInputEditText.addSeparatorOrDeleteText(
+        textToString: String,
+        startTask: String
+    ) {
+        if (!textToString.contains(SEPARATOR) && regex.matches(startTask)) {
+            text?.append(SEPARATOR)
+        } else if (textToString.contains(SEPARATOR) && !regex.matches(startTask)) {
+            text = null
+        }
     }
 
     private fun checkTimeForCorrect(
@@ -181,32 +202,14 @@ class InterfaceTaskView @JvmOverloads constructor(
         return Pair(newEndTaskToInt, newStartTaskToInt)
     }
 
-    private fun readingMode() {
+    private fun listenersResetErrorInputLayouts() {
         with(binding) {
-            task?.let {
-                buttonAddingTask.visibility = INVISIBLE
-                textInputEditTextDate.isFocusable = false
-                textInputEditTextDetails.isFocusable = false
-                textInputEditTextTitle.isFocusable = false
-
-                val time = context.getString(
-                    R.string.time_task_in_interfaceTaskView,
-                    it.dateStart,
-                    it.dateFinish
-                )
-                textInputEditTextDate.setText(time)
-                textInputEditTextDetails.setText(it.description)
-                textInputEditTextTitle.setText(it.name)
+            textInputEditTextTitle.addTextChangedListener {
+                textInputLayoutTitle.error = null
             }
-        }
-    }
-
-    private fun writingMode() {
-        with(binding) {
-            buttonAddingTask.visibility = VISIBLE
-            textInputEditTextDate.isFocusable = true
-            textInputEditTextDetails.isFocusable = true
-            textInputEditTextTitle.isFocusable = true
+            textInputEditTextDate.addTextChangedListener {
+                textInputLayoutDate.error = null
+            }
         }
     }
 

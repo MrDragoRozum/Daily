@@ -27,8 +27,6 @@ class TaskView @JvmOverloads constructor(
 ) {
     private val binding: TaskViewBinding
 
-    private var listener: OnClickTaskListener? = null
-
     private val borderPaint: Paint
 
     var title: String? = null
@@ -65,10 +63,6 @@ class TaskView @JvmOverloads constructor(
         orientation = VERTICAL
         background = AppCompatResources.getDrawable(context, R.color.blue)
 
-        setOnClickListener {
-            listener?.invoke(this)
-        }
-
         borderPaint = Paint().apply {
             color = context.getColor(R.color.black)
             style = Paint.Style.STROKE
@@ -90,10 +84,6 @@ class TaskView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), borderPaint)
-    }
-
-    fun setOnClickTaskListener(listener: OnClickTaskListener) {
-        this.listener = listener
     }
 
     private fun Float.toPX() = TypedValue.applyDimension(

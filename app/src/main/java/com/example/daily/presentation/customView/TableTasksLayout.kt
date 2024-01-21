@@ -152,6 +152,7 @@ class TableTasksLayout @JvmOverloads constructor(
             if (isSameStartTime(childNow, anotherChild)) return@list
 
             if (isRangeOfTimeInTask(childNow, anotherChild)) {
+
                 if (childNow.measuredHeight > anotherChild.measuredHeight
                     && childNow.top > calculateTopForChild(anotherChild)
                 ) {
