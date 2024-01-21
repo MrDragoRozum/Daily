@@ -26,8 +26,7 @@ class MainViewModel @Inject constructor(
     private val exportTasksUseCase: ExportTasksUseCase,
     private val importTasksUseCase: ImportTasksUseCase,
     private val requestNewListTaskSpecificDay: RequestNewListTaskSpecificDay,
-    private val calendar: Calendar,
-    private val rawOffset: Int
+    private val calendar: Calendar
 ) : ViewModel() {
 
     private var isNotException = true
@@ -51,8 +50,13 @@ class MainViewModel @Inject constructor(
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
             loading.emit(StateMain.Loading)
-            calendar.set(year, month, dayOfMonth)
-            Timestamp(calculateTime(calendar.timeInMillis)).also { startDay ->
+
+            calendar.apply {
+                set(year, month, dayOfMonth, WITHOUT_HOUR, WITHOUT_MINUTE, WITHOUT_SECOND)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+            }
+
+            Timestamp(calendar.timeInMillis).also { startDay ->
                 Timestamp(startDay.time + DAY_IN_MILLIS).also { endDay ->
                     requestNewListTaskSpecificDay(startDay.time, endDay.time)
                 }
@@ -87,10 +91,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun <T> Flow<T>.mergeWith(vararg another: Flow<T>) = merge(this, *another)
-    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - rawOffset
 
     companion object {
         private const val DAY_IN_MILLIS = 86400000
         private const val FIVE_SECOND = 5_000L
+
+        private const val WITHOUT_MINUTE = 0
+        private const val WITHOUT_SECOND = 0
+        private const val WITHOUT_MILLISECOND = 0
+        private const val WITHOUT_HOUR = 0
     }
 }

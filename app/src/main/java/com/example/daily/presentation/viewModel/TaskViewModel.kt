@@ -47,23 +47,29 @@ class TaskViewModel @Inject constructor(
 
     private fun installCalendars(time: Time, task: Task) {
         with(time) {
-            calendarStartTask.set(
-                year,
-                month,
-                dayOfMonth,
-                task.dateStart.toInt(),
-                WITHOUT_MINUTE,
-                WITHOUT_SECOND
-            )
+            calendarStartTask.apply {
+                set(
+                    year,
+                    month,
+                    dayOfMonth,
+                    task.dateStart.toInt(),
+                    WITHOUT_MINUTE,
+                    WITHOUT_SECOND
+                )
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+            }
 
-            calendarEndTask.set(
-                year,
-                month,
-                dayOfMonth,
-                task.dateFinish.toInt(),
-                WITHOUT_MINUTE,
-                WITHOUT_SECOND
-            )
+            calendarEndTask.apply {
+                set(
+                    year,
+                    month,
+                    dayOfMonth,
+                    task.dateFinish.toInt(),
+                    WITHOUT_MINUTE,
+                    WITHOUT_SECOND
+                )
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+            }
         }
     }
 
@@ -83,5 +89,6 @@ class TaskViewModel @Inject constructor(
     companion object {
         private const val WITHOUT_MINUTE = 0
         private const val WITHOUT_SECOND = 0
+        private const val WITHOUT_MILLISECOND = 0
     }
 }

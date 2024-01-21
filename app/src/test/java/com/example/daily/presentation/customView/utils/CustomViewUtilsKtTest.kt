@@ -1,8 +1,5 @@
 package com.example.daily.presentation.customView.utils
 
-import com.example.daily.presentation.customView.utils.isEndTimeMoreThanMaxValue
-import com.example.daily.presentation.customView.utils.isStartTimeLessThanZero
-import com.example.daily.presentation.customView.utils.isStartTimeMoreOrSameEndTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -8,30 +8,35 @@ import dagger.Provides
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Date
-import java.util.TimeZone
 
 @Module
 object DataModule {
-    private const val DAY_IN_MILLIS = 86400000
-    private val HOUR_IN_MILLIS = TimeZone.getDefault().rawOffset
+
     @Provides
     @ApplicationScope
     fun provideTaskDao(context: Context) = TaskDatabase.getInstance(context).taskDao()
 
     @Provides
     fun provideTodayDataInTimestamps(calendar: Calendar): TodayDayInTimestamps {
+        calendar.apply {
+            set(Calendar.HOUR, WITHOUT_HOUR)
+            set(Calendar.MINUTE, WITHOUT_MINUTE)
+            set(Calendar.SECOND, WITHOUT_SECOND)
+            set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+        }
         val todayDayInMillis = calendar.timeInMillis
-        val startDay = Timestamp(calculateTime(todayDayInMillis))
+        val startDay = Timestamp(todayDayInMillis)
         val endDay = Timestamp(startDay.time + DAY_IN_MILLIS)
         return TodayDayInTimestamps(startDay, endDay)
     }
 
     @Provides
-    fun provideRawOffset(): Int = HOUR_IN_MILLIS
-
-    @Provides
     fun provideDate(): Date = Date()
 
-    private fun calculateTime(time: Long): Long =
-        (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - HOUR_IN_MILLIS
+    private const val DAY_IN_MILLIS = 86400000
+    private const val WITHOUT_MINUTE = 0
+    private const val WITHOUT_SECOND = 0
+    private const val WITHOUT_MILLISECOND = 0
+    private const val WITHOUT_HOUR = 0
+
 }
