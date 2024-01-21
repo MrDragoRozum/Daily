@@ -1,4 +1,4 @@
-package com.example.daily.data.external
+package com.example.daily.data.externals
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

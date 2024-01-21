@@ -4,8 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.daily.data.database.model.TaskDbModel
-import kotlinx.coroutines.flow.Flow
+import com.example.daily.data.database.models.TaskDbModel
 
 
 @Dao

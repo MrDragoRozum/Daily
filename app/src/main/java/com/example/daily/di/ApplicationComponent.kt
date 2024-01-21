@@ -6,7 +6,10 @@ import com.example.daily.presentation.activity.TaskActivity
 import dagger.BindsInstance
 import dagger.Component
 
-@Component(modules = [DataModule::class, DomainModule::class, ViewModelModel::class, PresentationModule::class])
+@Component(
+    modules = [DataModule::class, DomainModule::class, ViewModelModel::class,
+        PresentationModule::class, DispatcherModule::class]
+)
 @ApplicationScope
 interface ApplicationComponent {
 

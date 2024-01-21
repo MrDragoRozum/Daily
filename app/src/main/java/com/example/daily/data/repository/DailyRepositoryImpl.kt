@@ -3,12 +3,12 @@ package com.example.daily.data.repository
 import android.content.Context
 import android.net.Uri
 import com.example.daily.data.database.TaskDao
-import com.example.daily.data.external.TaskJson
+import com.example.daily.data.externals.TaskJson
 import com.example.daily.data.mapper.TaskMapper
-import com.example.daily.data.modules.TodayDayInTimestamps
+import com.example.daily.data.models.TodayDayInTimestamps
 import com.example.daily.domain.models.Task
 import com.example.daily.domain.repository.DailyRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,16 +19,15 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class DailyRepositoryImpl @Inject constructor(
     private val context: Context,
     private val dao: TaskDao,
     private val mapper: TaskMapper,
     private val todayDayInTimestamps: TodayDayInTimestamps,
+    private val dispatcherIO: CoroutineDispatcher
 ) : DailyRepository {
 
-    private val dispatcherIO: CoroutineContext = Dispatchers.IO
     private val refreshListTask = MutableSharedFlow<Unit>()
 
     override suspend fun requestNewListTaskSpecificDay(startDay: Long, endDay: Long) {

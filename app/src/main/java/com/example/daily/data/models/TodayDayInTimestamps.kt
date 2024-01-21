@@ -1,4 +1,4 @@
-package com.example.daily.data.modules
+package com.example.daily.data.models
 
 import java.sql.Timestamp
 import javax.inject.Inject

@@ -1,7 +1,7 @@
 package com.example.daily.data.mapper
 
-import com.example.daily.data.database.model.TaskDbModel
-import com.example.daily.data.external.TaskJson
+import com.example.daily.data.database.models.TaskDbModel
+import com.example.daily.data.externals.TaskJson
 import com.example.daily.domain.models.Task
 import java.util.Calendar
 import java.util.Date

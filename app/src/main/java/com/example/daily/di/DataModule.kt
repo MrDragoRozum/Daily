@@ -2,7 +2,7 @@ package com.example.daily.di
 
 import android.content.Context
 import com.example.daily.data.database.TaskDatabase
-import com.example.daily.data.modules.TodayDayInTimestamps
+import com.example.daily.data.models.TodayDayInTimestamps
 import dagger.Module
 import dagger.Provides
 import java.sql.Timestamp
