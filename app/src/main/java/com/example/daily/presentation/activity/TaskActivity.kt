@@ -1,5 +1,6 @@
 package com.example.daily.presentation.activity
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -8,11 +9,23 @@ import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.daily.R
 import com.example.daily.databinding.ActivityTaskBinding
 import com.example.daily.domain.models.Task
+import com.example.daily.presentation.application.App
 import com.example.daily.presentation.customView.InterfaceTaskView
+import com.example.daily.presentation.models.TimeFromCalendarView
+import com.example.daily.presentation.viewModel.StateTask
+import com.example.daily.presentation.viewModel.TaskViewModel
+import com.example.daily.presentation.viewModel.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.io.Serializable
+import javax.inject.Inject
 
 typealias Mode = InterfaceTaskView.Mode
 
@@ -22,10 +35,43 @@ class TaskActivity : AppCompatActivity() {
         ActivityTaskBinding.inflate(layoutInflater)
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy { (application as App).component }
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         defineMode()
+        observes()
+    }
+
+    private fun observes() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.state.collectLatest {
+                    when (it) {
+                        StateTask.Loading -> binding.interfaceTaskView.progressBar = true
+                        StateTask.Success -> success()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun success() {
+        toast(R.string.success_message)
+        finish()
+    }
+
+    private fun toast(resId: Int) {
+        Toast.makeText(this@TaskActivity, resId, Toast.LENGTH_SHORT).show()
     }
 
     private fun defineMode() {
@@ -49,9 +95,10 @@ class TaskActivity : AppCompatActivity() {
 
     private fun add(mode: Mode) {
         with(binding.interfaceTaskView) {
+            val time = intent.getParcelable(TIME_EXTRA, TimeFromCalendarView::class.java)
             setMode(mode)
             setListener {
-                Log.d("TaskActivityTest", "$it")
+                viewModel.add(it, time)
             }
         }
     }
@@ -76,13 +123,19 @@ class TaskActivity : AppCompatActivity() {
     private fun checkSDK() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
     companion object {
-        fun newIntent(context: Context, mode: Mode, task: Task? = null) =
-            Intent(context, TaskActivity::class.java).apply {
-                putExtra(TASK_EXTRA, task)
-                putExtra(MODE_EXTRA, mode)
-            }
+        fun newIntent(
+            context: Context,
+            mode: Mode,
+            task: Task? = null,
+            time: TimeFromCalendarView? = null
+        ) = Intent(context, TaskActivity::class.java).apply {
+            putExtra(TASK_EXTRA, task)
+            putExtra(MODE_EXTRA, mode)
+            putExtra(TIME_EXTRA, time)
+        }
 
         const val TASK_EXTRA = "task"
         const val MODE_EXTRA = "mode"
+        const val TIME_EXTRA = "time"
     }
 }

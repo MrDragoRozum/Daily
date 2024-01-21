@@ -1,7 +1,6 @@
 package com.example.daily.presentation.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,14 +13,16 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.daily.R
 import com.example.daily.databinding.ActivityMainBinding
-import com.example.daily.presentation.MainViewModel
-import com.example.daily.presentation.State
-import com.example.daily.presentation.ViewModelFactory
+import com.example.daily.presentation.viewModel.MainViewModel
+import com.example.daily.presentation.viewModel.StateMain
+import com.example.daily.presentation.viewModel.ViewModelFactory
 import com.example.daily.presentation.application.App
 import com.example.daily.presentation.customView.InterfaceTaskView
+import com.example.daily.presentation.models.TimeFromCalendarView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.days
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,13 +69,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun listeners() {
         with(binding) {
+            val time = TimeFromCalendarView()
             calendarViewTasks.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                time.apply {
+                    this.year = year
+                    this.month = month
+                    this.dayOfMonth = dayOfMonth
+                }
                 viewModel.refreshTasks(year, month, dayOfMonth)
             }
             floatingActionButtonAddingTask.setOnClickListener {
                 TaskActivity.newIntent(
-                    this@MainActivity,
-                    InterfaceTaskView.Mode.ADDING
+                    context = this@MainActivity,
+                    mode = InterfaceTaskView.Mode.ADDING,
+                    time = time
                 ).also {
                     startActivity(it)
                 }
@@ -84,12 +92,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun observes(viewModel: MainViewModel) {
         lifecycleScope.launch {
-            viewModel.state.flowWithLifecycle(lifecycle).collectLatest {
+            viewModel.stateMain.flowWithLifecycle(lifecycle).collectLatest {
                 when (it) {
-                    is State.Error -> toast(R.string.error_message)
-                    is State.Success -> toast(R.string.success_message)
-                    is State.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is State.Result -> {
+                    is StateMain.Error -> toast(R.string.error_message)
+                    is StateMain.Success -> toast(R.string.success_message)
+                    is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is StateMain.Result -> {
                         binding.progressBar.visibility = View.GONE
                     }
                 }

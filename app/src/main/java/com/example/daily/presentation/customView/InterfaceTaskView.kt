@@ -2,7 +2,6 @@ package com.example.daily.presentation.customView
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
@@ -24,10 +23,19 @@ class InterfaceTaskView @JvmOverloads constructor(
     defStyleRes
 ) {
 
+    var task: Task? = null
+    var progressBar = false
+        set(value) {
+            field = value
+            if (value) {
+                binding.progressBar.visibility = VISIBLE
+            } else {
+                binding.progressBar.visibility = INVISIBLE
+            }
+        }
+
     private val binding: InterfaceOfTaskBinding
     private var listener: OnClickAddingButtonTaskListener? = null
-
-    var task: Task? = null
 
     private var startTime = DEFAULT_VALUE_START_TIME
     private var endTime = DEFAULT_VALUE_END_TIME
@@ -43,7 +51,7 @@ class InterfaceTaskView @JvmOverloads constructor(
         when (mode) {
             Mode.READING -> readingMode()
             Mode.ADDING -> writingMode()
-            Mode.UNSPECIFIED -> error("bruh")
+            Mode.UNSPECIFIED -> error("Недопустимый режим")
         }
     }
 
@@ -84,7 +92,8 @@ class InterfaceTaskView @JvmOverloads constructor(
                             setSelection(result.length)
                         }
                     }
-                    3 -> if(textToString.length == 4 && before > 0) this.text = null
+
+                    3 -> if (textToString.length == 4 && before > 0) this.text = null
 
                     4 -> {
                         var startTaskToInt = startTask.toInt()
@@ -118,7 +127,7 @@ class InterfaceTaskView @JvmOverloads constructor(
         with(binding) {
             buttonAddingTask.setOnClickListener {
 
-                if(checkDataFromEditTextsForCorrectness()) return@setOnClickListener
+                if (checkDataFromEditTextsForCorrectness()) return@setOnClickListener
 
                 Task(
                     dateStart = startTime.toLong(),
@@ -136,18 +145,13 @@ class InterfaceTaskView @JvmOverloads constructor(
         var error = false
         with(binding) {
             val title = textInputEditTextTitle.text.toString()
-            val description = textInputEditTextDetails.text.toString()
             val time = textInputEditTextDate.text.toString()
 
-            if(title.isBlank()) {
+            if (title.isBlank()) {
                 textInputLayoutTitle.error = REPORT_ERROR
                 error = true
             }
-            if(description.isBlank()) {
-                textInputLayoutDetails.error = REPORT_ERROR
-                error = true
-            }
-            if(time.length != 5) {
+            if (time.length != 5) {
                 textInputLayoutDate.error = REPORT_ERROR
                 error = true
             }

@@ -6,10 +6,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Task(
     val id: Int = UNSPECIFIED_ID,
-    val dateStart: Long,
-    val dateFinish: Long,
+    var dateStart: Long,
+    var dateFinish: Long,
     val name: String,
     val description: String
 ) : Parcelable
 
-const val UNSPECIFIED_ID = -1
+const val UNSPECIFIED_ID = 0

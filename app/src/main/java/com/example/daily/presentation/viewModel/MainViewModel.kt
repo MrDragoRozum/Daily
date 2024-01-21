@@ -1,4 +1,4 @@
-package com.example.daily.presentation
+package com.example.daily.presentation.viewModel
 
 import android.net.Uri
 import android.util.Log
@@ -33,24 +33,24 @@ class MainViewModel @Inject constructor(
 
     private val exception = CoroutineExceptionHandler { _, throwable ->
         viewModelScope.launch {
-            error.emit(State.Error)
+            error.emit(StateMain.Error)
             isNotException = false
             Log.d("ViewModelException", "$throwable")
         }
     }
 
-    private val loading = MutableSharedFlow<State>()
-    private val success = MutableSharedFlow<State>()
-    private val error = MutableSharedFlow<State>()
+    private val loading = MutableSharedFlow<StateMain>()
+    private val success = MutableSharedFlow<StateMain>()
+    private val error = MutableSharedFlow<StateMain>()
 
-    val state = getListTaskSpecificDay.invoke()
-        .map { State.Result(it) }
+    val stateMain = getListTaskSpecificDay.invoke()
+        .map { StateMain.Result(it) }
         .mergeWith(loading, error, success)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), State.Loading)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), StateMain.Loading)
 
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
-            loading.emit(State.Loading)
+            loading.emit(StateMain.Loading)
             calendar.set(year, month, dayOfMonth)
             Timestamp(calculateTime(calendar.timeInMillis)).also { startDay ->
                 Timestamp(startDay.time + DAY_IN_MILLIS).also { endDay ->
@@ -80,7 +80,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             coroutine.join()
             if (isNotException) {
-                success.emit(State.Success)
+                success.emit(StateMain.Success)
             }
             isNotException = true
         }
