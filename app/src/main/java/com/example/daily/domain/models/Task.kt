@@ -1,11 +1,15 @@
 package com.example.daily.domain.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Task(
-    val id: Int = DEFAULT_ID,
+    val id: Int = UNSPECIFIED_ID,
     val dateStart: Long,
     val dateFinish: Long,
     val name: String,
     val description: String
-)
+) : Parcelable
 
-const val DEFAULT_ID = -1
+const val UNSPECIFIED_ID = -1

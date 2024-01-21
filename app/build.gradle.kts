@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization")
+    id("kotlin-parcelize")
 }
 
 android {

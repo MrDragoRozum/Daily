@@ -18,6 +18,7 @@ import com.example.daily.presentation.MainViewModel
 import com.example.daily.presentation.State
 import com.example.daily.presentation.ViewModelFactory
 import com.example.daily.presentation.application.App
+import com.example.daily.presentation.customView.InterfaceTaskView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,8 +67,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listeners() {
-        binding.calendarViewTasks.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            viewModel.refreshTasks(year, month, dayOfMonth)
+        with(binding) {
+            calendarViewTasks.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                viewModel.refreshTasks(year, month, dayOfMonth)
+            }
+            floatingActionButtonAddingTask.setOnClickListener {
+                TaskActivity.newIntent(
+                    this@MainActivity,
+                    InterfaceTaskView.Mode.ADDING
+                ).also {
+                    startActivity(it)
+                }
+            }
         }
     }
 

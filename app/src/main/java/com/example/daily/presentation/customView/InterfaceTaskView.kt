@@ -2,7 +2,9 @@ package com.example.daily.presentation.customView
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import com.example.daily.R
 import com.example.daily.databinding.InterfaceOfTaskBinding
@@ -52,28 +54,41 @@ class InterfaceTaskView @JvmOverloads constructor(
     private fun listener() {
         listenerButtonForCreatingTask()
         listenerEditTextDateToGetTime()
+        listenersResetErrorInputLayouts()
+    }
+
+    private fun listenersResetErrorInputLayouts() {
+        binding.textInputEditTextTitle.addTextChangedListener {
+            binding.textInputLayoutTitle.error = null
+        }
+        binding.textInputEditTextDetails.addTextChangedListener {
+            binding.textInputLayoutDetails.error = null
+        }
     }
 
     private fun listenerEditTextDateToGetTime() {
         with(binding.textInputEditTextDate) {
             doOnTextChanged { text, start, before, _ ->
-                var textToString = text.toString()
+                val textToString = text.toString()
                 val startTask = textToString.substringBefore(SEPARATOR)
+
+                binding.textInputLayoutDate.error = null
 
                 when (start) {
                     in 0..2 -> {
-                        if (canAddingSeparator(textToString, startTask)) {
+                        if (!textToString.contains(SEPARATOR) && regex.matches(startTask)) {
                             this.text?.append(SEPARATOR)
-                        } else if (!canAddingSeparator(textToString, startTask)) {
-                            textToString = textToString.substring(start, start)
-                            setText(textToString)
-                            setSelection(textToString.length)
+                        } else if (textToString.contains(SEPARATOR) && !regex.matches(startTask)) {
+                            val result = textToString.substring(start, start)
+                            setText(result)
+                            setSelection(result.length)
                         }
                     }
+                    3 -> if(textToString.length == 4 && before > 0) this.text = null
 
                     4 -> {
                         var startTaskToInt = startTask.toInt()
-                        var endTaskToInt = textToString.substringBefore(SEPARATOR).toInt()
+                        var endTaskToInt = textToString.substringAfter(SEPARATOR).toInt()
 
                         val pair = checkTimeForCorrect(startTaskToInt, endTaskToInt)
                         endTaskToInt = pair.first
@@ -102,6 +117,9 @@ class InterfaceTaskView @JvmOverloads constructor(
     private fun listenerButtonForCreatingTask() {
         with(binding) {
             buttonAddingTask.setOnClickListener {
+
+                if(checkDataFromEditTextsForCorrectness()) return@setOnClickListener
+
                 Task(
                     dateStart = startTime.toLong(),
                     dateFinish = endTime.toLong(),
@@ -112,6 +130,29 @@ class InterfaceTaskView @JvmOverloads constructor(
                 }
             }
         }
+    }
+
+    private fun checkDataFromEditTextsForCorrectness(): Boolean {
+        var error = false
+        with(binding) {
+            val title = textInputEditTextTitle.text.toString()
+            val description = textInputEditTextDetails.text.toString()
+            val time = textInputEditTextDate.text.toString()
+
+            if(title.isBlank()) {
+                textInputLayoutTitle.error = REPORT_ERROR
+                error = true
+            }
+            if(description.isBlank()) {
+                textInputLayoutDetails.error = REPORT_ERROR
+                error = true
+            }
+            if(time.length != 5) {
+                textInputLayoutDate.error = REPORT_ERROR
+                error = true
+            }
+        }
+        return error
     }
 
     private fun checkTimeForCorrect(
@@ -134,11 +175,6 @@ class InterfaceTaskView @JvmOverloads constructor(
         }
         return Pair(newEndTaskToInt, newStartTaskToInt)
     }
-
-    private fun canAddingSeparator(
-        textToString: String,
-        startTask: String
-    ) = !textToString.contains(SEPARATOR) && regex.matches(startTask)
 
     private fun readingMode() {
         with(binding) {
@@ -167,6 +203,7 @@ class InterfaceTaskView @JvmOverloads constructor(
 
     companion object {
         private const val SEPARATOR = "-"
+        private const val REPORT_ERROR = " "
     }
 
     enum class Mode {

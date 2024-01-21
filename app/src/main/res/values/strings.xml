@@ -11,4 +11,5 @@
     <string name="time_hint">Время:</string>
     <string name="title_hint">Заголовок:</string>
     <string name="details_hint">Подробности:</string>
+    <string name="unspecified_mode">Экран закрыт: не указан режим</string>
 </resources>
