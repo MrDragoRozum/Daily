@@ -188,7 +188,11 @@ class InterfaceTaskView @JvmOverloads constructor(
                 textInputEditTextDetails.isFocusable = false
                 textInputEditTextTitle.isFocusable = false
 
-                val time = context.getString(R.string.time_taskView, it.dateStart, it.dateFinish)
+                val time = context.getString(
+                    R.string.time_task_in_interfaceTaskView,
+                    it.dateStart,
+                    it.dateFinish
+                )
                 textInputEditTextDate.setText(time)
                 textInputEditTextDetails.setText(it.description)
                 textInputEditTextTitle.setText(it.name)
