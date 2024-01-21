@@ -165,7 +165,7 @@ class InterfaceTaskView @JvmOverloads constructor(
     ): Pair<Int, Int> {
         var newStartTaskToInt = startTaskToInt
         var newEndTaskToInt = endTaskToInt
-        if (isStartTimeMoreThanZero(newStartTaskToInt)) {
+        if (isStartTimeLessThanZero(newStartTaskToInt)) {
             newStartTaskToInt = DEFAULT_VALUE_START_TIME
         }
 

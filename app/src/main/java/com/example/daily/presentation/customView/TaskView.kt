@@ -38,7 +38,7 @@ class TaskView @JvmOverloads constructor(
 
     var startTime: Int = DEFAULT_VALUE_START_TIME
         set(value) {
-            if (isStartTimeMoreThanZero(value)) return
+            if (isStartTimeLessThanZero(value)) return
             field = value
         }
     var endTime: Int = DEFAULT_VALUE_END_TIME
