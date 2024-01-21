@@ -1,13 +1,13 @@
 package com.example.daily.presentation.viewModel
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daily.domain.usecase.ExportTasksUseCase
 import com.example.daily.domain.usecase.GetListTaskSpecificDay
 import com.example.daily.domain.usecase.ImportTasksUseCase
 import com.example.daily.domain.usecase.RequestNewListTaskSpecificDay
+import com.example.daily.presentation.viewModel.states.StateMain
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -32,11 +32,10 @@ class MainViewModel @Inject constructor(
 
     private var isNotException = true
 
-    private val exception = CoroutineExceptionHandler { _, throwable ->
+    private val exception = CoroutineExceptionHandler { _, _ ->
         viewModelScope.launch {
             error.emit(StateMain.Error)
             isNotException = false
-            Log.d("ViewModelException", "$throwable")
         }
     }
 
@@ -49,7 +48,6 @@ class MainViewModel @Inject constructor(
         .mergeWith(loading, error, success)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), StateMain.Loading)
 
-        // Может быть тут собака зарыта
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
             loading.emit(StateMain.Loading)

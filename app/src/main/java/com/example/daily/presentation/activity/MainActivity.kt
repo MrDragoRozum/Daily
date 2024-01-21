@@ -8,40 +8,35 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.daily.R
 import com.example.daily.databinding.ActivityMainBinding
-import com.example.daily.presentation.viewModel.MainViewModel
-import com.example.daily.presentation.viewModel.StateMain
-import com.example.daily.presentation.viewModel.ViewModelFactory
 import com.example.daily.presentation.application.App
 import com.example.daily.presentation.customView.InterfaceTaskView
 import com.example.daily.presentation.customView.TaskView
 import com.example.daily.presentation.models.TimeFromCalendarView
+import com.example.daily.presentation.viewModel.MainViewModel
+import com.example.daily.presentation.viewModel.states.StateMain
+import com.example.daily.presentation.viewModel.factory.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.days
+
+typealias mode = InterfaceTaskView.Mode
 
 class MainActivity : AppCompatActivity() {
 
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val component by lazy {
-        (application as App).component
-    }
+    private val component by lazy { (application as App).component }
 
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
     }
 
     private lateinit var resultLauncherImport: ActivityResultLauncher<Array<String>>
-
     private lateinit var resultLauncherExport: ActivityResultLauncher<String>
 
     @Inject
@@ -51,11 +46,14 @@ class MainActivity : AppCompatActivity() {
         component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+        installActivity()
+    }
 
-        listeners()
-        observes(viewModel)
+    private fun installActivity() {
+        setSupportActionBar(binding.toolbar)
         registersActivityResults()
+        observes(viewModel)
+        listeners()
     }
 
     private fun registersActivityResults() {
@@ -72,22 +70,22 @@ class MainActivity : AppCompatActivity() {
     private fun listeners() {
         with(binding) {
             val time = TimeFromCalendarView()
-            calendarViewTasks.setOnDateChangeListener { _, year, month, dayOfMonth ->
+
+            calendarViewTasks.setOnDateChangeListener { _, cYear, cMonth, cDayOfMonth ->
                 time.apply {
-                    this.year = year
-                    this.month = month
-                    this.dayOfMonth = dayOfMonth
+                    year = cYear
+                    month = cMonth
+                    dayOfMonth = cDayOfMonth
                 }
-                viewModel.refreshTasks(year, month, dayOfMonth)
+                viewModel.refreshTasks(cYear, cMonth, cDayOfMonth)
             }
+
             floatingActionButtonAddingTask.setOnClickListener {
                 TaskActivity.newIntent(
                     context = this@MainActivity,
-                    mode = InterfaceTaskView.Mode.ADDING,
+                    mode = mode.ADDING,
                     time = time
-                ).also {
-                    startActivity(it)
-                }
+                ).also { startActivity(it) }
             }
         }
     }
@@ -99,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     is StateMain.Error -> toast(R.string.error_message)
                     is StateMain.Success -> toast(R.string.success_message)
                     is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is StateMain.Result ->  installTaskViews(state)
+                    is StateMain.Result -> installTaskViews(state)
                 }
             }
         }
@@ -113,24 +111,20 @@ class MainActivity : AppCompatActivity() {
             tableTasksLayout.apply {
                 state.list.map { task ->
                     TaskView(this@MainActivity).apply {
-                        // Перенести toInt в mapper
                         title = task.name
                         startTime = task.dateStart.toInt()
                         endTime = task.dateFinish.toInt()
+
                         setOnClickListener {
                             TaskActivity.newIntent(
-                                context =this@MainActivity,
-                                mode = InterfaceTaskView.Mode.READING,
+                                context = this@MainActivity,
+                                mode = mode.READING,
                                 task = task,
                                 time = null
-                            ).also {
-                                startActivity(it)
-                            }
+                            ).also { startActivity(it) }
                         }
                     }
-                }.also {
-                    addListTaskView(it)
-                }
+                }.also { addListTaskView(it) }
             }
         }
     }

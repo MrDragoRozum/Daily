@@ -1,12 +1,10 @@
 package com.example.daily.presentation.activity
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -19,9 +17,9 @@ import com.example.daily.domain.models.Task
 import com.example.daily.presentation.application.App
 import com.example.daily.presentation.customView.InterfaceTaskView
 import com.example.daily.presentation.models.TimeFromCalendarView
-import com.example.daily.presentation.viewModel.StateTask
+import com.example.daily.presentation.viewModel.states.StateTask
 import com.example.daily.presentation.viewModel.TaskViewModel
-import com.example.daily.presentation.viewModel.ViewModelFactory
+import com.example.daily.presentation.viewModel.factory.ViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -31,9 +29,7 @@ typealias Mode = InterfaceTaskView.Mode
 
 class TaskActivity : AppCompatActivity() {
 
-    private val binding by lazy {
-        ActivityTaskBinding.inflate(layoutInflater)
-    }
+    private val binding by lazy { ActivityTaskBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -50,6 +46,38 @@ class TaskActivity : AppCompatActivity() {
         setContentView(binding.root)
         defineMode()
         observes()
+    }
+
+    private fun defineMode() {
+        intent.getSerializable(MODE_EXTRA, Mode::class.java).also {
+            when (it) {
+                Mode.READING -> read(it)
+                Mode.ADDING -> add(it)
+                Mode.UNSPECIFIED -> returnOnMainActivity()
+            }
+        }
+    }
+
+    private fun read(mode: Mode) {
+        intent.getParcelable(TASK_EXTRA, Task::class.java).also {
+            with(binding.interfaceTaskView) {
+                this.task = it
+                setMode(mode)
+            }
+        }
+    }
+
+    private fun add(mode: Mode) {
+        with(binding.interfaceTaskView) {
+            val time = intent.getParcelable(TIME_EXTRA, TimeFromCalendarView::class.java)
+            setMode(mode)
+            setListener { viewModel.add(it, time) }
+        }
+    }
+
+    private fun returnOnMainActivity() {
+        toast(R.string.unspecified_mode)
+        finish()
     }
 
     private fun observes() {
@@ -72,44 +100,6 @@ class TaskActivity : AppCompatActivity() {
 
     private fun toast(resId: Int) {
         Toast.makeText(this@TaskActivity, resId, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun defineMode() {
-        intent.getSerializable(MODE_EXTRA, Mode::class.java).also {
-            when (it) {
-                Mode.READING -> read(it)
-                Mode.ADDING -> add(it)
-                Mode.UNSPECIFIED -> returnOnMainActivity()
-            }
-        }
-    }
-
-    private fun returnOnMainActivity() {
-        Toast.makeText(
-            this@TaskActivity,
-            R.string.unspecified_mode,
-            Toast.LENGTH_LONG
-        ).show()
-        finish()
-    }
-
-    private fun add(mode: Mode) {
-        with(binding.interfaceTaskView) {
-            val time = intent.getParcelable(TIME_EXTRA, TimeFromCalendarView::class.java)
-            setMode(mode)
-            setListener {
-                viewModel.add(it, time)
-            }
-        }
-    }
-
-    private fun read(mode: Mode) {
-        intent.getParcelable(TASK_EXTRA, Task::class.java).also {
-            with(binding.interfaceTaskView) {
-                this.task = it
-                setMode(mode)
-            }
-        }
     }
 
     private fun <T : Serializable?> Intent.getSerializable(key: String, jClass: Class<T>): T =

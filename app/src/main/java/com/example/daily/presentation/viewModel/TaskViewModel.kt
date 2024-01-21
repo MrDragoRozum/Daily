@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.daily.domain.models.Task
 import com.example.daily.domain.usecase.AddTaskUseCase
 import com.example.daily.presentation.models.TimeFromCalendarView
+import com.example.daily.presentation.viewModel.states.StateTask
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class TaskViewModel @Inject constructor(
     val state = _state.asSharedFlow()
 
     fun add(task: Task, time: Time) {
-        checkTimeForCorrectness(time)
+        setTodayDateInTime(time)
         installCalendars(time, task)
 
         task.dateStart = calendarStartTask.timeInMillis
@@ -66,8 +67,7 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    // Вместо выхода -- установить дату
-    private fun checkTimeForCorrectness(time: Time) {
+    private fun setTodayDateInTime(time: Time) {
         if (time.year == Time.DEFAULT_VALUE
             || time.month == Time.DEFAULT_VALUE
             || time.dayOfMonth == Time.DEFAULT_VALUE

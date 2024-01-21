@@ -1,4 +1,4 @@
-package com.example.daily.presentation.customView
+package com.example.daily.presentation.customView.utils
 
 
 fun isStartTimeLessThanZero(value: Int) = value < 0

@@ -1,4 +1,4 @@
-package com.example.daily.presentation.viewModel
+package com.example.daily.presentation.viewModel.states
 
 import com.example.daily.domain.models.Task
 

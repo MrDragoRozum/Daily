@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.daily.R
 import com.example.daily.databinding.TaskViewBinding
+import com.example.daily.presentation.customView.utils.*
 import kotlin.math.roundToInt
 
 typealias OnClickTaskListener = (TaskView) -> Unit
