@@ -235,6 +235,12 @@ class TableTasksLayout @JvmOverloads constructor(
         }
     }
 
+    override fun removeAllViews() {
+        super.removeAllViews()
+        listTaskViews.clear()
+        mapSavedChanges.clear()
+    }
+
     private fun Float.toPX() = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         this,

@@ -26,7 +26,8 @@ class MainViewModel @Inject constructor(
     private val exportTasksUseCase: ExportTasksUseCase,
     private val importTasksUseCase: ImportTasksUseCase,
     private val requestNewListTaskSpecificDay: RequestNewListTaskSpecificDay,
-    private val calendar: Calendar
+    private val calendar: Calendar,
+    private val rawOffset: Int
 ) : ViewModel() {
 
     private var isNotException = true
@@ -48,6 +49,7 @@ class MainViewModel @Inject constructor(
         .mergeWith(loading, error, success)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), StateMain.Loading)
 
+        // Может быть тут собака зарыта
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
             loading.emit(StateMain.Loading)
@@ -87,7 +89,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun <T> Flow<T>.mergeWith(vararg another: Flow<T>) = merge(this, *another)
-    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS
+    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - rawOffset
 
     companion object {
         private const val DAY_IN_MILLIS = 86400000

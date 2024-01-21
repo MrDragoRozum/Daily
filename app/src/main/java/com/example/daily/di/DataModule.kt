@@ -8,6 +8,7 @@ import dagger.Provides
 import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Date
+import java.util.TimeZone
 
 @Module
 class DataModule {
@@ -24,11 +25,15 @@ class DataModule {
     }
 
     @Provides
+    fun provideRawOffset(): Int = HOUR_IN_MILLIS
+
+    @Provides
     fun provideDate(): Date = Date()
 
-    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS
+    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - HOUR_IN_MILLIS
 
     companion object {
         private const val DAY_IN_MILLIS = 86400000
+        private var HOUR_IN_MILLIS = TimeZone.getDefault().rawOffset
     }
 }

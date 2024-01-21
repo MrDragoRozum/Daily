@@ -29,10 +29,10 @@ class TaskMapper @Inject constructor(
         description = taskJson.description
     )
 
-    // TODO: Проверить: возвращает нужный результат или нет
     fun mapDbModelToEntity(taskDbModel: TaskDbModel): Task {
         startDate.time = taskDbModel.dateStart
-        endDate.time = taskDbModel.dateFinish - HOUR_IN_MILLIS
+        endDate.time = taskDbModel.dateFinish
+
         startCalendar.time = startDate
         endCalendar.time = endDate
 
@@ -55,8 +55,4 @@ class TaskMapper @Inject constructor(
         name = taskDbModel.name,
         description = taskDbModel.description
     )
-
-    companion object {
-        private const val HOUR_IN_MILLIS = 3600000
-    }
 }

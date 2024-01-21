@@ -18,6 +18,7 @@ import com.example.daily.presentation.viewModel.StateMain
 import com.example.daily.presentation.viewModel.ViewModelFactory
 import com.example.daily.presentation.application.App
 import com.example.daily.presentation.customView.InterfaceTaskView
+import com.example.daily.presentation.customView.TaskView
 import com.example.daily.presentation.models.TimeFromCalendarView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -92,13 +93,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun observes(viewModel: MainViewModel) {
         lifecycleScope.launch {
-            viewModel.stateMain.flowWithLifecycle(lifecycle).collectLatest {
-                when (it) {
+            viewModel.stateMain.flowWithLifecycle(lifecycle).collectLatest { state ->
+                when (state) {
                     is StateMain.Error -> toast(R.string.error_message)
                     is StateMain.Success -> toast(R.string.success_message)
                     is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
                     is StateMain.Result -> {
-                        binding.progressBar.visibility = View.GONE
+                        with(binding) {
+                            tableTasksLayout.removeAllViews()
+                            progressBar.visibility = View.GONE
+                            tableTasksLayout.apply {
+                                state.list.map { task ->
+                                    TaskView(this@MainActivity).apply {
+                                        // Перенести toInt в mapper
+                                        title = task.name
+                                        startTime = task.dateStart.toInt()
+                                        endTime = task.dateFinish.toInt()
+                                    }
+                                }.also {
+                                    addListTaskView(it)
+                                }
+                            }
+                        }
                     }
                 }
             }
