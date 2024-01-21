@@ -11,7 +11,9 @@ import java.util.Date
 import java.util.TimeZone
 
 @Module
-class DataModule {
+object DataModule {
+    private const val DAY_IN_MILLIS = 86400000
+    private val HOUR_IN_MILLIS = TimeZone.getDefault().rawOffset
     @Provides
     @ApplicationScope
     fun provideTaskDao(context: Context) = TaskDatabase.getInstance(context).taskDao()
@@ -30,10 +32,6 @@ class DataModule {
     @Provides
     fun provideDate(): Date = Date()
 
-    private fun calculateTime(time: Long): Long = (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - HOUR_IN_MILLIS
-
-    companion object {
-        private const val DAY_IN_MILLIS = 86400000
-        private var HOUR_IN_MILLIS = TimeZone.getDefault().rawOffset
-    }
+    private fun calculateTime(time: Long): Long =
+        (time / DAY_IN_MILLIS) * DAY_IN_MILLIS - HOUR_IN_MILLIS
 }

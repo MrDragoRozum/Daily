@@ -5,7 +5,7 @@ import dagger.Provides
 import java.util.Calendar
 
 @Module
-class PresentationModule {
+object PresentationModule {
     @Provides
     fun provideCalendar(): Calendar = Calendar.getInstance()
 }
