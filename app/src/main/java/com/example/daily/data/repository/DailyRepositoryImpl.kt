@@ -60,6 +60,7 @@ class DailyRepositoryImpl @Inject constructor(
                     }
                 }
             }
+            refreshListTask.emit(Unit)
         }
     }
 
