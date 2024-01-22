@@ -2,14 +2,11 @@ package com.example.daily.presentation.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
 @Parcelize
-data class TimeFromCalendarView(
-    var year: Int = DEFAULT_VALUE,
-    var month: Int = DEFAULT_VALUE,
-    var dayOfMonth: Int = DEFAULT_VALUE
-): Parcelable {
-    companion object {
-        const val DEFAULT_VALUE = -1
-    }
-}
+data class TimeFromCalendarView @Inject constructor(
+    var year: Int,
+    var month: Int,
+    var dayOfMonth: Int
+) : Parcelable

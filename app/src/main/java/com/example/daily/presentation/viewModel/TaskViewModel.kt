@@ -24,7 +24,6 @@ class TaskViewModel @Inject constructor(
     val state = _state.asSharedFlow()
 
     fun add(task: Task, time: Time) {
-        setTodayDateInTime(time)
         installCalendars(time, task)
 
         task.dateStart = calendarStartTask.timeInMillis
@@ -69,19 +68,6 @@ class TaskViewModel @Inject constructor(
                     WITHOUT_SECOND
                 )
                 set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
-            }
-        }
-    }
-
-    private fun setTodayDateInTime(time: Time) {
-        if (time.year == Time.DEFAULT_VALUE
-            || time.month == Time.DEFAULT_VALUE
-            || time.dayOfMonth == Time.DEFAULT_VALUE
-        ) {
-            time.apply {
-                year = calendarStartTask.get(Calendar.YEAR)
-                month = calendarStartTask.get(Calendar.MONTH)
-                dayOfMonth = calendarStartTask.get(Calendar.DAY_OF_MONTH)
             }
         }
     }

@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var time: TimeFromCalendarView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
@@ -69,8 +72,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun listeners() {
         with(binding) {
-            val time = TimeFromCalendarView()
-
             calendarViewTasks.setOnDateChangeListener { _, cYear, cMonth, cDayOfMonth ->
                 time.apply {
                     year = cYear
