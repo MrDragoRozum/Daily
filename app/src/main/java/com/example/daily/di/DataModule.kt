@@ -19,7 +19,7 @@ object DataModule {
     @Provides
     fun provideTodayDataInTimestamps(calendar: Calendar): TodayDayInTimestamps {
         calendar.apply {
-            set(Calendar.HOUR, WITHOUT_HOUR)
+            set(Calendar.HOUR_OF_DAY, WITHOUT_HOUR)
             set(Calendar.MINUTE, WITHOUT_MINUTE)
             set(Calendar.SECOND, WITHOUT_SECOND)
             set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)

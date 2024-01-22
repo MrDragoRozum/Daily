@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.daily.presentation.customView.InterfaceTaskView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/interfaceTaskView"
     android:layout_width="match_parent"
-    android:padding="16dp"
     android:layout_height="match_parent"
-    tools:context=".presentation.activity.TaskActivity" />
+    android:fillViewport="true"
+    tools:context=".presentation.activity.TaskActivity">
+
+    <com.example.daily.presentation.customView.InterfaceTaskView
+        android:id="@+id/interfaceTaskView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        tools:context=".presentation.activity.TaskActivity" />
+
+</ScrollView>
