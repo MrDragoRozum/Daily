@@ -18,7 +18,7 @@ class CustomViewUtilsKtTest {
     }
 
     @Test
-    fun `is Start Time More Or Same End Time`() {
+    fun `is start time more or same end time`() {
         val endTimeLessValue = 8
         val endTimeSameValue = 12
         val value = 12
@@ -34,7 +34,7 @@ class CustomViewUtilsKtTest {
     }
 
     @Test
-    fun `Is endTime more than maxValue`() {
+    fun `Is end time more than maxValue`() {
         // maxValue = 23
         val valueMore = 25
         val valueLess = 21
