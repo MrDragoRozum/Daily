@@ -40,6 +40,7 @@ class DailyRepositoryImpl @Inject constructor(
 
     override suspend fun addTask(params: Task) {
         dao.insertTask(mapper.mapEntityToDbModel(params))
+        refreshListTask.emit(Unit)
     }
 
     override fun getListTaskSpecificDay(): Flow<List<Task>> = flow {

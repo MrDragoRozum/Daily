@@ -45,7 +45,7 @@ class MainViewModel @Inject constructor(
     val stateMain = getListTaskSpecificDay.invoke()
         .map { StateMain.Result(it) }
         .mergeWith(loading, error, success)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FIVE_SECOND), StateMain.Loading)
+        .stateIn(viewModelScope, SharingStarted.Lazily, StateMain.Loading)
 
     fun refreshTasks(year: Int, month: Int, dayOfMonth: Int) {
         viewModelScope.launch {
@@ -94,7 +94,6 @@ class MainViewModel @Inject constructor(
 
     companion object {
         private const val DAY_IN_MILLIS = 86400000
-        private const val FIVE_SECOND = 5_000L
 
         private const val WITHOUT_MINUTE = 0
         private const val WITHOUT_SECOND = 0
