@@ -54,10 +54,10 @@ class TaskViewModel @Inject constructor(
                     month,
                     dayOfMonth,
                     task.dateStart.toInt(),
-                    WITHOUT_MINUTE.ordinal,
-                    WITHOUT_SECOND.ordinal
+                    WITHOUT_MINUTE.zero,
+                    WITHOUT_SECOND.zero
                 )
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.zero)
             }
 
             calendarEndTask.apply {
@@ -66,10 +66,10 @@ class TaskViewModel @Inject constructor(
                     month,
                     dayOfMonth,
                     task.dateFinish.toInt(),
-                    WITHOUT_MINUTE.ordinal,
-                    WITHOUT_SECOND.ordinal
+                    WITHOUT_MINUTE.zero,
+                    WITHOUT_SECOND.zero
                 )
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.zero)
             }
         }
     }

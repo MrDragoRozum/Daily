@@ -58,11 +58,11 @@ class MainViewModel @Inject constructor(
                     year,
                     month,
                     dayOfMonth,
-                    WITHOUT_HOUR.ordinal,
-                    WITHOUT_MINUTE.ordinal,
-                    WITHOUT_SECOND.ordinal
+                    WITHOUT_HOUR.zero,
+                    WITHOUT_MINUTE.zero,
+                    WITHOUT_SECOND.zero
                 )
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.zero)
             }
 
             Timestamp(calendar.timeInMillis).also { startDay ->
