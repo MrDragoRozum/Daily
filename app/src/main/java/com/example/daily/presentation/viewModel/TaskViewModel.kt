@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.daily.domain.models.Task
 import com.example.daily.domain.usecase.AddTaskUseCase
 import com.example.daily.presentation.models.TimeFromCalendarView
+import com.example.daily.presentation.viewModel.WithoutTime.*
 import com.example.daily.presentation.viewModel.states.StateTask
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
+
 
 typealias Time = TimeFromCalendarView
 
@@ -36,9 +38,9 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             addTaskUseCase(task)
             _state.emit(StateTask.Loading)
-        }.also {
+        }.apply {
             viewModelScope.launch {
-                it.join()
+                join()
                 _state.emit(StateTask.Success)
             }
         }
@@ -52,10 +54,10 @@ class TaskViewModel @Inject constructor(
                     month,
                     dayOfMonth,
                     task.dateStart.toInt(),
-                    WITHOUT_MINUTE,
-                    WITHOUT_SECOND
+                    WITHOUT_MINUTE.ordinal,
+                    WITHOUT_SECOND.ordinal
                 )
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
             }
 
             calendarEndTask.apply {
@@ -64,17 +66,11 @@ class TaskViewModel @Inject constructor(
                     month,
                     dayOfMonth,
                     task.dateFinish.toInt(),
-                    WITHOUT_MINUTE,
-                    WITHOUT_SECOND
+                    WITHOUT_MINUTE.ordinal,
+                    WITHOUT_SECOND.ordinal
                 )
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
             }
         }
-    }
-
-    companion object {
-        private const val WITHOUT_MINUTE = 0
-        private const val WITHOUT_SECOND = 0
-        private const val WITHOUT_MILLISECOND = 0
     }
 }

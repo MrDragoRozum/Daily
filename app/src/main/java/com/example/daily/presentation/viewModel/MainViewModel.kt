@@ -7,6 +7,7 @@ import com.example.daily.domain.usecase.ExportTasksUseCase
 import com.example.daily.domain.usecase.GetListTaskSpecificDay
 import com.example.daily.domain.usecase.ImportTasksUseCase
 import com.example.daily.domain.usecase.RequestNewListTaskSpecificDay
+import com.example.daily.presentation.viewModel.WithoutTime.*
 import com.example.daily.presentation.viewModel.states.StateMain
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
 import java.sql.Timestamp
 import java.util.Calendar
 import javax.inject.Inject
@@ -42,7 +44,7 @@ class MainViewModel @Inject constructor(
     private val success = MutableSharedFlow<StateMain>()
     private val error = MutableSharedFlow<StateMain>()
 
-    val stateMain = getListTaskSpecificDay.invoke()
+    val state = getListTaskSpecificDay.invoke()
         .map { StateMain.Result(it) }
         .mergeWith(loading, error, success)
         .stateIn(viewModelScope, SharingStarted.Lazily, StateMain.Loading)
@@ -52,8 +54,15 @@ class MainViewModel @Inject constructor(
             loading.emit(StateMain.Loading)
 
             calendar.apply {
-                set(year, month, dayOfMonth, WITHOUT_HOUR, WITHOUT_MINUTE, WITHOUT_SECOND)
-                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND)
+                set(
+                    year,
+                    month,
+                    dayOfMonth,
+                    WITHOUT_HOUR.ordinal,
+                    WITHOUT_MINUTE.ordinal,
+                    WITHOUT_SECOND.ordinal
+                )
+                set(Calendar.MILLISECOND, WITHOUT_MILLISECOND.ordinal)
             }
 
             Timestamp(calendar.timeInMillis).also { startDay ->
@@ -91,13 +100,6 @@ class MainViewModel @Inject constructor(
     }
 
     private fun <T> Flow<T>.mergeWith(vararg another: Flow<T>) = merge(this, *another)
-
-    companion object {
-        private const val DAY_IN_MILLIS = 86400000
-
-        private const val WITHOUT_MINUTE = 0
-        private const val WITHOUT_SECOND = 0
-        private const val WITHOUT_MILLISECOND = 0
-        private const val WITHOUT_HOUR = 0
-    }
 }
+
+private const val DAY_IN_MILLIS = 86400000
