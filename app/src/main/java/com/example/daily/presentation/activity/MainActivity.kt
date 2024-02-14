@@ -70,6 +70,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun observes(viewModel: MainViewModel) {
+        lifecycleScope.launch {
+            viewModel.state.flowWithLifecycle(lifecycle).collectLatest { state ->
+                when (state) {
+                    is StateMain.Error -> toast(R.string.error_message)
+                    is StateMain.Success -> toast(R.string.success_message)
+                    is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is StateMain.Result -> installTaskViews(state)
+                }
+            }
+        }
+    }
+
     private fun listeners() {
         with(binding) {
             calendarViewTasks.setOnDateChangeListener { _, cYear, cMonth, cDayOfMonth ->
@@ -91,19 +104,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun observes(viewModel: MainViewModel) {
-        lifecycleScope.launch {
-            viewModel.stateMain.flowWithLifecycle(lifecycle).collectLatest { state ->
-                when (state) {
-                    is StateMain.Error -> toast(R.string.error_message)
-                    is StateMain.Success -> toast(R.string.success_message)
-                    is StateMain.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is StateMain.Result -> installTaskViews(state)
-                }
-            }
-        }
-    }
-
     private fun installTaskViews(state: StateMain.Result) {
         with(binding) {
             tableTasksLayout.removeAllViews()
@@ -121,7 +121,6 @@ class MainActivity : AppCompatActivity() {
                                 context = this@MainActivity,
                                 mode = mode.READING,
                                 task = task,
-                                time = null
                             ).also { startActivity(it) }
                         }
                     }
@@ -146,9 +145,7 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    companion object {
-        private const val JSON_FILE = "application/json"
-        private const val DEFAULT_NAME_FILE = "tasks"
-    }
 }
+
+private const val JSON_FILE = "application/json"
+private const val DEFAULT_NAME_FILE = "tasks"

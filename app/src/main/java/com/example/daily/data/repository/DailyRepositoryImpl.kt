@@ -9,7 +9,6 @@ import com.example.daily.data.models.TodayDayInTimestamps
 import com.example.daily.domain.models.Task
 import com.example.daily.domain.repository.DailyRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
@@ -33,14 +32,12 @@ class DailyRepositoryImpl @Inject constructor(
     override suspend fun requestNewListTaskSpecificDay(startDay: Long, endDay: Long) {
         todayDayInTimestamps.startDay.time = startDay
         todayDayInTimestamps.endDay.time = endDay
-        coroutineScope {
-            refreshListTask.emit(Unit)
-        }
+        update()
     }
 
     override suspend fun addTask(params: Task) {
         dao.insertTask(mapper.mapEntityToDbModel(params))
-        refreshListTask.emit(Unit)
+        update()
     }
 
     override fun getListTaskSpecificDay(): Flow<List<Task>> = flow {
@@ -61,10 +58,9 @@ class DailyRepositoryImpl @Inject constructor(
                     }
                 }
             }
-            refreshListTask.emit(Unit)
+            update()
         }
     }
-
 
     @OptIn(ExperimentalSerializationApi::class)
     override suspend fun exportTasks(uri: String) {
@@ -77,6 +73,10 @@ class DailyRepositoryImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun update() {
+        refreshListTask.emit(Unit)
     }
 
     private suspend fun getMappedListFromDbToEntity() = dao.getListTaskByDay(

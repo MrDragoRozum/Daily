@@ -44,6 +44,10 @@ class TaskActivity : AppCompatActivity() {
         component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        installActivity()
+    }
+
+    private fun installActivity() {
         defineMode()
         observes()
     }
@@ -106,7 +110,7 @@ class TaskActivity : AppCompatActivity() {
         if (checkSDK()) this.getSerializableExtra(key, jClass)!!
         else this.getSerializableExtra(key) as T
 
-    private fun <T : Parcelable> Intent.getParcelable(key: String, jClass: Class<T>): T =
+    private fun <T : Parcelable?> Intent.getParcelable(key: String, jClass: Class<T>): T =
         if (checkSDK()) this.getParcelableExtra(key, jClass)!!
         else this.getParcelableExtra<Task>(key) as T
 
